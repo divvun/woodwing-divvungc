@@ -325,7 +325,7 @@ var DivvunEditor = function (editorWrapper, mode, wwTextsRaw, wwEditor) {
     this.protocol = window.location.protocol;
     this.subdir = "/apy";
   } else {
-    this.hostname = "192.168.22.60";
+    this.hostname = window.location.hostname;
     this.port = "2737";
     this.protocol = window.location.protocol;
     this.subdir = "";
@@ -720,9 +720,9 @@ DivvunEditor.prototype.servercheck = function (userpass, text, off, cb, mode) {
   console.log("servercheck", off, mode, text);
 
   return $.ajax(this.checkUrl, {
-    beforeSend: function (xhr) {
-      xhr.setRequestHeader("Authorization", basicAuthHeader(userpass));
-    },
+    // beforeSend: function (xhr) {
+      // xhr.setRequestHeader("Authorization", basicAuthHeader(userpass));
+    // },
     type: "POST",
     data: {
       langpair: mode,

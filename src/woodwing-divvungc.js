@@ -394,7 +394,7 @@ var DivvunEditor = function(editorWrapper/*:HTMLElement*/, mode/*:string*/, wwTe
     this.subdir = "/apy";
   }
   else {
-    this.hostname = "192.168.22.60";
+    this.hostname = window.location.hostname;
     this.port = "2737";
     this.protocol = window.location.protocol;
     this.subdir = "";
@@ -844,9 +844,9 @@ DivvunEditor.prototype.servercheck = function(userpass/*:userpass*/, text/*:stri
   // after the user has typed unless the text still matches what we
   // sent.
   return $.ajax(this.checkUrl, {
-    beforeSend: function(xhr) {
-      xhr.setRequestHeader("Authorization", basicAuthHeader(userpass));
-    },
+    //beforeSend: function(xhr) {
+      //xhr.setRequestHeader("Authorization", basicAuthHeader(userpass));
+    //},
     type: "POST",
     data: {
       langpair: mode,
