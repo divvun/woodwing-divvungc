@@ -2,8 +2,8 @@ FROM debian:sid-slim
 
 ENV LC_ALL C.UTF-8
 
-RUN apt-get -q update
-RUN apt-get -q install -y  \
+RUN apt-get -q update && \
+    apt-get -q install -y --no-install-recommends \
         curl               \
         sudo               \
         lsb-release        \
@@ -13,10 +13,17 @@ RUN apt-get -q install -y  \
         libutfcpp-dev      \
         unzip
 
+
 # It'd be nice to use nightlies, but since they're not built for arm64
-# we have to manually compile:
-RUN curl -Ss https://apertium.projectjj.com/debian-apertium-all-dev.sh >debian-apertium-all-dev.sh
-RUN sed -i.tmp1 '/test.runall/d' debian-apertium-all-dev.sh
-RUN sed -i.tmp2 's/foma.foma/& ; cmake ./' debian-apertium-all-dev.sh
-RUN sed -i.tmp3 '/svn co.*CorpusTools/,/popd/d' debian-apertium-all-dev.sh
-RUN bash -x debian-apertium-all-dev.sh
+# we have to manually compile for this architecture:
+RUN if [ "$(uname -m)" = "aarch64" ]; then \
+        curl -Ss https://apertium.projectjj.com/debian-apertium-all-dev.sh >debian-apertium-all-dev.sh && \
+        sed -i.tmp1 '/test.runall/d' debian-apertium-all-dev.sh && \
+        sed -i.tmp2 's/foma.foma/& ; cmake ./' debian-apertium-all-dev.sh && \
+        sed -i.tmp3 '/svn co.*CorpusTools/,/popd/d' debian-apertium-all-dev.sh && \
+        bash -x debian-apertium-all-dev.sh; \
+else \
+    curl -sS https://apertium.projectjj.com/apt/install-nightly.sh >install-nightly.sh \
+    && bash install-nightly.sh \
+    && apt-get install -f -y apertium-all-dev divvun-gramcheck; \
+fi

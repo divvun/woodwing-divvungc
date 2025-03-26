@@ -1,5 +1,6 @@
 # We use nightly packages:
-FROM divvun:woodwing-tools
+ARG ARCH=unset
+FROM unhammer/divvun:woodwing-tools-${ARCH}
 
 ENV LC_ALL C.UTF-8
 
@@ -20,29 +21,29 @@ ENV modename="${iso639}"-"${iso639}"_spell
 
 RUN mkdir /data
 
-#RUN apt install giella-sme giella-sme-speller
-#RUN unzip -d data "${zcheck}"
-#
-# Unfortunately we can't just apt-get install since it's not in arm64
-# dist. So we manually find the package link for amd64 – it's arch
-# independent – and install that package:
-ENV dist=sid
-RUN packages=$(curl -Ss https://apertium.projectjj.com/apt/nightly/dists/"${dist}"/main/binary-amd64/Packages) \
-	     && pool=$(echo "${packages}" | awk -v package="${package}" '/^Package:/{p=($2 == package)} p && /^Filename:/{print $2;exit}') \
-	     && echo "$pool" \
-	     && url=https://apertium.projectjj.com/apt/nightly/"${pool}" \
-	     && echo "$url" \
-	     && curl "${url}" >"${package}.deb"
-
-RUN ar x "${package}.deb"
-# RUN sh -c 'for f in data.tar.*; do tar xf "$f" "'"${zcheck}"'"; done '
-RUN for f in data.tar.*; do tar xf "$f" "${zcheck}"; done
-RUN unzip -d /data "${zcheck}"
 
 
-RUN mkdir /modes
-RUN divvun-gen-sh -j /data/pipespec.xml "${pipename}" \
-    | grep -v '^#'                                    \
-    | tr '\n' ' '                                     \
-    | sed 's/\\ //g'                                  \
-    > /modes/"${modename}".mode
+# For arm64, unfortunately we can't just apt-get install since it's
+# not in arm64 dist. So we manually find the package link for amd64 –
+# it's arch independent – and install that package:
+RUN \
+    if [ "$(uname -m)" = "aarch64" ]; then \
+export dist=sid; \
+packages=$(curl -Ss https://apertium.projectjj.com/apt/nightly/dists/"${dist}"/main/binary-amd64/Packages) \
+    && pool=$(echo "${packages}" | awk -v package="${package}" '/^Package:/{p=($2 == package)} p && /^Filename:/{print $2;exit}') \
+    && echo "$pool" \
+    && url=https://apertium.projectjj.com/apt/nightly/"${pool}" \
+    && echo "$url" \
+    && curl "${url}" >"${package}.deb" \
+    && ar x "${package}.deb" \
+    && for f in data.tar.*; do tar xf "$f" "${zcheck}"; done \
+else \
+    apt-get install -y --no-install-recommends giella-sme giella-sme-speller; \
+fi \
+    && unzip -d /data "${zcheck}" \
+    && mkdir /modes \
+    && divvun-gen-sh -j /data/pipespec.xml "${pipename}" \
+       | grep -v '^#'                                    \
+       | tr '\n' ' '                                     \
+       | sed 's/\\ //g'                                  \
+       > /modes/"${modename}".mode

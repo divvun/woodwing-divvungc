@@ -5,7 +5,15 @@
 # `docker buildx build --platform linux/amd64,linux/arm64` etc. but
 # that gives https://stackoverflow.com/q/68267348/69663
 
-    docker build -t unhammer/divvun:woodwing-tools -f Dockerfile.tools . \
- && docker build -t unhammer/divvun:woodwing-data  -f Dockerfile.data  . \
- && docker build -t unhammer/divvun:woodwing-apy   -f Dockerfile.apy   . \
- && docker run --name apy -p2737:2737 -it unhammer/divvun:woodwing-apy
+arch="$(uname -m)"
+
+    docker build --build-arg ARCH="${arch}" -t unhammer/divvun:woodwing-tools-"${arch}" -f Dockerfile.tools . \
+ && docker build --build-arg ARCH="${arch}" -t unhammer/divvun:woodwing-data-"${arch}"  -f Dockerfile.data  . \
+ && docker build --build-arg ARCH="${arch}" -t unhammer/divvun:woodwing-apy-"${arch}"   -f Dockerfile.apy   . \
+ && (docker stop apy && docker container rm apy || true) \
+ && docker run --name apy -p2737:2737 -it unhammer/divvun:woodwing-apy-"${arch}"
+
+echo "Now you can run: "
+echo "$ docker login"
+echo "$ docker push unhammer/divvun:woodwing-tools-x86_64 && docker push unhammer/divvun:woodwing-data-x86_64 && docker push unhammer/divvun:woodwing-apy-x86_64"
+echo "If the push doesn't work, rm ~/.docker/config.json and try the above two steps again."

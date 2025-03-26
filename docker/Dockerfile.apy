@@ -1,4 +1,5 @@
-FROM divvun:woodwing-data
+ARG ARCH=unset
+FROM unhammer/divvun:woodwing-data-${ARCH}
 
 ENV LC_ALL C.UTF-8
 

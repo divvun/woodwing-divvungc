@@ -75,5 +75,8 @@ If you wish to run the backend from your own server:
     docker run --name apy -p2737:2737 -it unhammer/divvun:woodwing-apy
 #+end_src
 
-Use [[docker/build][docker/build]] to rebuild images (the one above is built for arm64,
-e.g. M1 macs).
+* Updating data/tools
+
+Use [[docker/build][docker/build]] to rebuild images. The one above is built for arm64,
+e.g. M1 macs; the script will tag anything you build from now on with
+the arch, e.g. =docker.io/unhammer/divvun:woodwing-apy-x86_64=.
