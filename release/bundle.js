@@ -400,14 +400,15 @@ DivvunEditor.prototype.wwSepsInString = function (str) {
   return m ? m.length : 0;
 };
 DivvunEditor.prototype.wwSepsInDelta = function (delta) {
-  let self = this;
-  return delta.ops.reduce(function (acc, op) {
+  const self = this;
+  const insertions = delta.ops.reduce(function (acc, op) {
     if (op.insert && typeof op.insert === "string") {
-      return acc + self.wwSepsInString(op.insert);
+      return acc + op.insert;
     } else {
-      return acc;
+      return "";
     }
-  }, 0);
+  }, "");
+  return insertions.split(self.wwSep).length - 1;
 };
 
 DivvunEditor.prototype.cancel = function () {

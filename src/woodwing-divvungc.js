@@ -467,21 +467,16 @@ DivvunEditor.prototype.stashSoftHyphens = function(textsMut/*:Array<string>*/) {
 };
 
 DivvunEditor.prototype.wwSep = "❡\n";
-DivvunEditor.prototype.wwSepRe = new RegExp(DivvunEditor.prototype.wwSep, "g");
-DivvunEditor.prototype.wwSepsInString = function(str/*:string*/) {
-  let m = str.match(this.wwSepRe);
-  return m ? m.length : 0;
-};
-DivvunEditor.prototype.wwSepsInDelta = function(delta) {
-  let self = this;
-  return delta.ops.reduce(function(acc/*:number*/, op/*:op*/) {
-    if(op.insert && typeof op.insert === "string") { // embeds are non-string inserts
-      return acc + self.wwSepsInString(op.insert);
+DivvunEditor.prototype.wwSepsInDelta = function (delta) {
+  const self = this;
+  const insertions = delta.ops.reduce(function (acc, op) {
+    if (op.insert && typeof op.insert === "string") {
+      return acc + op.insert;
+    } else {
+      return "";
     }
-    else {
-      return acc;
-    }
-  }, 0);
+  }, "");
+  return insertions.split(self.wwSep).length - 1;
 };
 
 DivvunEditor.prototype.cancel = function()/*: void*/ {
