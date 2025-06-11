@@ -1,0 +1,9 @@
+[Unit]
+Description=Run Nightly Divvun Update
+
+[Timer]
+OnCalendar=*-*-* 02:00:00
+ersistent=true
+
+[Install]
+WantedBy=timers.target

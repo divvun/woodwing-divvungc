@@ -1,0 +1,6 @@
+[Unit]
+Description=Nightly Divvun Update
+
+[Service]
+Type=oneshot
+ExecStart=/home/kevin/setup-linux.sh
