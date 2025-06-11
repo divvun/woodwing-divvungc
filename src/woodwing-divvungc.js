@@ -394,7 +394,7 @@ var DivvunEditor = function(editorWrapper/*:HTMLElement*/, mode/*:string*/, wwTe
     this.subdir = "/apy";
   }
   else {
-    this.hostname = "192.168.22.208";
+    this.hostname = "10.35.10.13";
     this.port = "2737";
     this.protocol = window.location.protocol;
     this.subdir = "";
