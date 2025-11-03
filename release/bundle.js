@@ -394,11 +394,6 @@ DivvunEditor.prototype.stashSoftHyphens = function (textsMut) {
 };
 
 DivvunEditor.prototype.wwSep = "❡\n";
-DivvunEditor.prototype.wwSepRe = new RegExp(DivvunEditor.prototype.wwSep, "g");
-DivvunEditor.prototype.wwSepsInString = function (str) {
-  let m = str.match(this.wwSepRe);
-  return m ? m.length : 0;
-};
 DivvunEditor.prototype.wwSepsInDelta = function (delta) {
   const self = this;
   const insertions = delta.ops.reduce(function (acc, op) {
@@ -721,9 +716,6 @@ DivvunEditor.prototype.servercheck = function (userpass, text, off, cb, mode) {
   console.log("servercheck", off, mode, text);
 
   return $.ajax(this.checkUrl, {
-    // beforeSend: function (xhr) {
-      // xhr.setRequestHeader("Authorization", basicAuthHeader(userpass));
-    // },
     type: "POST",
     data: {
       langpair: mode,
